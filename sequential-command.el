@@ -39,7 +39,7 @@
 ;; `define-sequential-command' is a macro that defines a command whose
 ;; behavior is changed by sequence of calls of the same command.
 ;;
-;; `seq-return' is a command to return to the position when sequence
+;; `sequential-command-return' is a command to return to the position when sequence
 ;; of calls of the same command was started.
 ;;
 ;; See sequential-command-config.el if you want examples.
@@ -50,7 +50,7 @@
 ;;
 ;; Below are complete command list:
 ;;
-;;  `seq-return'
+;;  `sequential-command-return'
 ;;    Return to the position when sequence of calls of the same command was started.
 ;;
 ;;; Customizable Options:
@@ -60,11 +60,11 @@
 
 ;;; Demonstration:
 
-;; Execute M-x seq-demo. And press C-x C-z many times.
+;; Execute M-x sequential-command-demo. And press C-x C-z many times.
 
 ;;; Bug Report:
 ;;
-;; If you have problem, send a bug report via M-x seq-send-bug-report.
+;; If you have problem, send a bug report via M-x sequential-command-send-bug-report.
 ;; The step is:
 ;;  0) Setup mail in Emacs, the easiest way is:
 ;;       (setq user-mail-address "your@mail.address")
@@ -77,7 +77,7 @@
 ;;  3) Use Lisp version instead of compiled one: (load "sequential-command.el")
 ;;  4) Do it!
 ;;  5) If you got an error, please do not close *Backtrace* buffer.
-;;  6) M-x seq-send-bug-report and M-x insert-buffer *Backtrace*
+;;  6) M-x sequential-command-send-bug-report and M-x insert-buffer *Backtrace*
 ;;  7) Describe the bug using a precise recipe.
 ;;  8) Type C-c C-c to send.
 ;;  # If you are a Japanese, please write in Japanese:-)
@@ -92,7 +92,7 @@
 ;; * Add demo.
 ;; * Rename file name.
 ;; * New macro: `define-sequential-command'.
-;; * New command: `seq-return'.
+;; * New command: `sequential-command-return'.
 ;;
 ;; Revision 1.1  2009/02/17 01:24:04  rubikitch
 ;; Initial revision
@@ -103,18 +103,18 @@
 (defvar sequential-command-version "$Id: sequential-command.el,v 1.3 2010/05/04 08:55:35 rubikitch Exp $")
 (eval-when-compile (require 'cl))
 
-(defvar seq-store-count 0)
-(defvar seq-start-position nil
+(defvar sequential-command-store-count 0)
+(defvar sequential-command-start-position nil
   "Stores `point' and `window-start' when sequence of calls of the same
- command was started. This variable is updated by `seq-count'")
+ command was started. This variable is updated by `sequential-command-count'")
 
-(defun seq-count* ()
+(defun sequential-command-count* ()
   "Returns number of times `this-command' was executed.
-It also updates `seq-start-position'."
+It also updates `sequential-command-start-position'."
   (if (eq last-command this-command)
-      (incf seq-store-count)
-    (setq seq-start-position  (cons (point) (window-start))
-          seq-store-count     0)))
+      (incf sequential-command-store-count)
+    (setq sequential-command-start-position  (cons (point) (window-start))
+          sequential-command-store-count     0)))
 
 (defmacro define-sequential-command (name &rest commands)
   "Define a command whose behavior is changed by sequence of calls of the same command."
@@ -127,34 +127,34 @@ It also updates `seq-start-position'."
                 ".")
        (interactive)
        (call-interactively
-        (aref ,cmdary (mod (seq-count*) ,(length cmdary)))))))
+        (aref ,cmdary (mod (sequential-command-count*) ,(length cmdary)))))))
 ;; (macroexpand '(define-sequential-command foo beginning-of-line beginning-of-buffer))
 
-(defun seq-return ()
+(defun sequential-command-return ()
   "Return to the position when sequence of calls of the same command was started."
   (interactive)
-  (goto-char (car seq-start-position))
-  (set-window-start (selected-window) (cdr seq-start-position)))
+  (goto-char (car sequential-command-start-position))
+  (set-window-start (selected-window) (cdr sequential-command-start-position)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;  demonstration                                                     ;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun seq-demo ()
+(defun sequential-command-demo ()
   (interactive)
-  (global-set-key "\C-x\C-z" 'seq-count-test)
+  (global-set-key "\C-x\C-z" 'sequential-command-count-test)
   (message "Press C-x C-z repeatedly"))
 
-(defun seq-count-test ()
+(defun sequential-command-count-test ()
   (interactive)
-  (message "seq-count: %d" (seq-count*)))
+  (message "sequential-command-count: %d" (sequential-command-count*)))
 
-(define-sequential-command seq-home
-  beginning-of-line back-to-indentation beginning-of-buffer seq-return)
+(define-sequential-command sequential-command-home
+  beginning-of-line back-to-indentation beginning-of-buffer sequential-command-return)
 
 ;;;; Bug report
-(defvar seq-maintainer-mail-address
+(defvar sequential-command-maintainer-mail-address
   (concat "rubiki" "tch@ru" "by-lang.org"))
-(defvar seq-bug-report-salutation
+(defvar sequential-command-bug-report-salutation
   "Describe bug below, using a precise recipe.
 
 When I executed M-x ...
@@ -166,14 +166,14 @@ How to send a bug report:
   4) If you got an error, please paste *Backtrace* buffer.
   5) Type C-c C-c to send.
 # If you are a Japanese, please write in Japanese:-)")
-(defun seq-send-bug-report ()
+(defun sequential-command-send-bug-report ()
   (interactive)
   (reporter-submit-bug-report
-   seq-maintainer-mail-address
+   sequential-command-maintainer-mail-address
    "sequential-command.el"
    (apropos-internal "^seq" 'boundp)
    nil nil
-   seq-bug-report-salutation))
+   sequential-command-bug-report-salutation))
 
 (provide 'sequential-command)
 

@@ -31,7 +31,7 @@
 ;; Below are complete command list:
 ;;
 ;;  `sequential-command-setup-keys'
-;;    Rebind C-a, C-e, M-u, M-c, and M-l to seq-* commands.
+;;    Rebind C-a, C-e, M-u, M-c, and M-l to sequential-command-* commands.
 ;;
 ;;; Customizable Options:
 ;;
@@ -56,39 +56,39 @@
 (defvar sequential-command-config-version "$Id: sequential-command-config.el,v 1.3 2009/03/22 09:09:58 rubikitch Exp $")
 (require 'sequential-command)
 
-(define-sequential-command seq-home
-  beginning-of-line beginning-of-buffer seq-return)
-(define-sequential-command seq-end
-  end-of-line end-of-buffer seq-return)
+(define-sequential-command sequential-command-home
+  beginning-of-line beginning-of-buffer sequential-command-return)
+(define-sequential-command sequential-command-end
+  end-of-line end-of-buffer sequential-command-return)
 
-(defun seq-upcase-backward-word ()
+(defun sequential-command-upcase-backward-word ()
   (interactive)
-  (upcase-word (- (1+ (seq-count*)))))
-(defun seq-capitalize-backward-word ()
+  (upcase-word (- (1+ (sequential-command-count*)))))
+(defun sequential-command-capitalize-backward-word ()
   (interactive)
-  (capitalize-word (- (1+ (seq-count*)))))
-(defun seq-downcase-backward-word ()
+  (capitalize-word (- (1+ (sequential-command-count*)))))
+(defun sequential-command-downcase-backward-word ()
   (interactive)
-  (downcase-word (- (1+ (seq-count*)))))
+  (downcase-word (- (1+ (sequential-command-count*)))))
 
 (when (require 'org nil t)
-  (define-sequential-command org-seq-home
-    org-beginning-of-line beginning-of-buffer seq-return)
-  (define-sequential-command org-seq-end
-    org-end-of-line end-of-buffer seq-return))
+  (define-sequential-command org-sequential-command-home
+    org-beginning-of-line beginning-of-buffer sequential-command-return)
+  (define-sequential-command org-sequential-command-end
+    org-end-of-line end-of-buffer sequential-command-return))
 
 (defun sequential-command-setup-keys ()
-  "Rebind C-a, C-e, M-u, M-c, and M-l to seq-* commands.
+  "Rebind C-a, C-e, M-u, M-c, and M-l to sequential-command-* commands.
 If you use `org-mode', rebind C-a and C-e."
   (interactive)
-  (global-set-key "\C-a" 'seq-home)
-  (global-set-key "\C-e" 'seq-end)
-  (global-set-key "\M-u" 'seq-upcase-backward-word)
-  (global-set-key "\M-c" 'seq-capitalize-backward-word)
-  (global-set-key "\M-l" 'seq-downcase-backward-word)
+  (global-set-key "\C-a" 'sequential-command-home)
+  (global-set-key "\C-e" 'sequential-command-end)
+  (global-set-key "\M-u" 'sequential-command-upcase-backward-word)
+  (global-set-key "\M-c" 'sequential-command-capitalize-backward-word)
+  (global-set-key "\M-l" 'sequential-command-downcase-backward-word)
   (when (require 'org nil t)
-    (define-key org-mode-map "\C-a" 'org-seq-home)
-    (define-key org-mode-map "\C-e" 'org-seq-end)))
+    (define-key org-mode-map "\C-a" 'org-sequential-command-home)
+    (define-key org-mode-map "\C-e" 'org-sequential-command-end)))
 
 (provide 'sequential-command-config)
 
