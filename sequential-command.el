@@ -101,7 +101,7 @@
 ;;; Code:
 
 (defvar sequential-command-version "$Id: sequential-command.el,v 1.3 2010/05/04 08:55:35 rubikitch Exp $")
-(eval-when-compile (require 'cl))
+(eval-when-compile (require 'cl-lib))
 
 (defvar sequential-command-store-count 0)
 (defvar sequential-command-start-position nil
@@ -112,7 +112,7 @@
   "Returns number of times `this-command' was executed.
 It also updates `sequential-command-start-position'."
   (if (eq last-command this-command)
-      (incf sequential-command-store-count)
+      (cl-incf sequential-command-store-count)
     (setq sequential-command-start-position  (cons (point) (window-start))
           sequential-command-store-count     0)))
 
